@@ -1,0 +1,32 @@
+name: Upload Website
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write  # Required for OIDC authentication
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: us-east-1
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          SOURCE_DIR: 'website'
