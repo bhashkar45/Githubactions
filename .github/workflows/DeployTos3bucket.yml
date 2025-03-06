@@ -29,7 +29,7 @@ jobs:
       - name: Install Ansible 2.16
         run: |
           sudo apt update
-          sudo apt install -y python3-pip python3-venv
+          sudo apt install python3-pip python3-venv
           python3 -m venv ansible-env
           source ansible-env/bin/activate
           pip install --upgrade pip setuptools
