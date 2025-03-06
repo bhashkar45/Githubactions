@@ -26,13 +26,15 @@ jobs:
       - name: Upload Artifact to s3
         run: aws s3 cp website s3://${{ env.S3BUCKET }}/website --recursive
       
-      - name: "Install Ansible"
-        uses: alex-oleshkevich/setup-ansible@VERSION 
-        with:
-          version: "9.3.0"
+      - name: Install Ansible 2.16.0
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          pip install --upgrade pip
+          pip install ansible==2.16.0
 
-      - name: "Print Ansible version"
-        run: ansible-playbook --version
+      - name: Verify Ansible Installation
+        run: ansible --version
       #- name: Deploy to S3
       #  uses: tpaschalis/s3-sync-action@master
       #  with:
