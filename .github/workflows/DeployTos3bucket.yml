@@ -5,12 +5,11 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write  # Required for OIDC authentication
-  contents: read
-
 jobs:
   deploy:
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -21,7 +20,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
           role-session-name: github-actions
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_REGION_NAME }} 
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
