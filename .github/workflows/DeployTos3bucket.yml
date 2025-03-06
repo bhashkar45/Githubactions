@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-
+env: 
+  S3BUCKET: devops-artifact-bkt
+  
 jobs:
   deploy:
     permissions:
