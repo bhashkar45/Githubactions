@@ -27,7 +27,7 @@ jobs:
       - name: Upload Artifact to s3
         run: aws s3 cp website s3://${{ env.S3BUCKET }}/website --recursive
 
-      - name: Install Ansible 2.16
+      - name: deploying new code to application server
         run: |
           cd /home/ubuntu/cync-devops-ansible
           ansible-playbook playbooks/directory.yml -i dynamic-inventory/dev/aws_ec2.yml
