@@ -9,6 +9,17 @@ env:
   S3BUCKET: devops-artifact-bkt
   
 jobs:
+  get-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Branch Name
+        run: |
+          if [ "$GITHUB_REF" == "refs/heads/main" ]; then
+            BRANCH_NAME="main"
+          else
+            BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "Branch name is $BRANCH_NAME"
   deploy:
     permissions:
       id-token: write  # Required for OIDC authentication
@@ -17,7 +28,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
