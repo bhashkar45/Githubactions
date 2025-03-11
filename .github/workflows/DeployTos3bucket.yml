@@ -4,30 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - ${GIT_BRANCH_NAME}
+      - ${{ vars.BRANCH_NAME}}
 env: 
   S3BUCKET: devops-artifact-bkt
   
 jobs:
-  main_job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git branch name
-        id: git-branch-name
-        uses: EthanSK/git-branch-name-action@v1
-      - name: Echo the branch name
-        run: echo "Branch name ${GIT_BRANCH_NAME}"
-  get-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Branch Name
-        run: |
-          if [ "$GITHUB_REF" == "refs/heads/main" ]; then
-            BRANCH_NAME="main"
-          else
-            BRANCH_NAME="${GITHUB_REF#refs/heads/}"
-          fi
-          echo "Branch name is $BRANCH_NAME"
   deploy:
     permissions:
       id-token: write  # Required for OIDC authentication
@@ -49,27 +30,24 @@ jobs:
           echo Build started on `date`
           appPrefix="$APP_PREFIX"         
           timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
-          buildID=$(echo $CODEBUILD_BUILD_ID | awk -F':' '{print $2}')
-          srcVer=$CODEBUILD_SOURCE_VERSION
-          echo $CODEBUILD_SOURCE_VERSION
-          echo "printing the branch name $GITHUB_BRANCH_NAME"
-          indx=$(echo $CODEBUILD_SOURCE_VERSION | grep -q ^arn ; echo $?)
-          if [ "$indx" -eq 0 ]; then
-          srcVer=$CODEBUILD_RESOLVED_SOURCE_VERSION
-          fi
-          artifactversion=$(echo $appPrefix$GITHUB_BRANCH_NAME.$buildID.$srcVer.$timestamp)
-          buildversion=$(echo $GITHUB_BRANCH_NAME.$buildID.$srcVer.$timestamp)
+          #buildID=$(echo $CODEBUILD_BUILD_ID | awk -F':' '{print $2}')
+          #srcVer=$CODEBUILD_SOURCE_VERSION
+         # echo $CODEBUILD_SOURCE_VERSION
+          echo "printing the branch name ${{ vars.BRANCH_NAME }}"
+          artifactversion=$(echo $appPrefix${{vars.BRANCH_NAME}}.$timestamp)
+          #buildversion=$(echo $GITHUB_BRANCH_NAME.$buildID.$srcVer.$timestamp)
           artifactname=$(echo $artifactversion.tar.gz)
           #aws s3 cp s3://$DEVOPS_SCRIPTS_BUCKET/$SCRIPT_S3_PATH/appspec.yml .
           #aws s3 cp s3://$DEVOPS_SCRIPTS_BUCKET/$SCRIPT_S3_PATH/ansible_deploy.sh .
-          echo $ANSIBLE_INVENTORY > env.txt
+          #echo $ANSIBLE_INVENTORY > env.txt
           #yarn install
           #yarn build
+          npm install
           #node --version
           #cd dist
-          touch version.html
-          echo "$buildversion"> version.html
-          cat version.html
+          #touch version.html
+          #echo "$buildversion"> version.html
+          #cat version.html
           #mv version.html cync-app/
           #cd cync-app/
           tar -zcvf $artifactname *
