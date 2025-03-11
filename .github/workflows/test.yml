@@ -25,7 +25,7 @@ jobs:
           #appPrefix="$APP_PREFIX"
           ls -l
           timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
-          echo "Printing the branch name ${{ vars.BRANCH_NAME }}"
+          echo "Printing The Branch Name ${{ vars.BRANCH_NAME }}"
           artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
           artifactname="$artifactversion.tar.gz"
           npm install
