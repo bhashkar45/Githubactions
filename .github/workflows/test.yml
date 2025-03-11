@@ -24,7 +24,10 @@ jobs:
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION_NAME }}
       - name: upload to s3
-        run: aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}"
+        run: |
+          artifactversion=$(echo ${GITHUB_REF#refs/heads/}.$timestamp)
+          artifactname=$(echo $artifactversion.tar.gz)
+          aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}"
       - name: Deploying new code to application server
         run: |
           cd /home/ubuntu/cync-devops-ansible
