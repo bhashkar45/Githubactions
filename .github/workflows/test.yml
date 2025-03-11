@@ -17,11 +17,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Upload Artifact to S3
-        run:
-          npm install
-          #tar -zcvf "$artifactname" *
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
