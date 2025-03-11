@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev #${{ vars.BRANCH_NAME }}
-
+      - dev
 env:
   S3BUCKET: devops-artifact-bkt
 
@@ -19,11 +18,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Upload Artifact to S3 sdfghj
+      - name: Upload Artifact to S3
         run: |
           echo "Branch name is ${{ github.ref_name }}"
           echo "Build started on $(date)"
           appPrefix="$APP_PREFIX"
+          ll
           timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
           echo "Printing the branch name ${{ vars.BRANCH_NAME }}"
           artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
