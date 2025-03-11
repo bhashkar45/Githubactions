@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - ${GIT_BRANCH_NAME}
 env: 
   S3BUCKET: devops-artifact-bkt
   
