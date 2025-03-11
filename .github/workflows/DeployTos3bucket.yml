@@ -19,13 +19,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
-        with:
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
-          role-session-name: github-actions
-          aws-region: ${{ secrets.AWS_REGION_NAME }}
-
       - name: Upload Artifact to S3
         run: |
           echo "Branch name is ${{ github.ref_name }}"
@@ -36,9 +29,15 @@ jobs:
           artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
           artifactname="$artifactversion.tar.gz"
           npm install
-          tar -zcvf "$artifactname" *
-          aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}/website/"
-
+          tar -zcvf "$artifactname" *- name: Configure AWS Credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+      - name: upload to s3
+          aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}"
       - name: Deploying new code to application server
         run: |
           cd /home/ubuntu/cync-devops-ansible
