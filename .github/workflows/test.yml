@@ -28,6 +28,7 @@ jobs:
           echo "Printing The Branch Name ${{ vars.BRANCH_NAME }}"
           artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
           artifactname="$artifactversion.tar.gz"
+          cd myapp
           npm install
           tar -zcvf "$artifactname" *- name: Configure AWS Credentials
       - name: Configure AWS Credentials
