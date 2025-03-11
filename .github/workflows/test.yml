@@ -19,18 +19,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Upload Artifact to S3
-        run: |
-          echo "Branch name is ${{ github.ref_name }}"
-          echo "Build started on $(date)"
-          #appPrefix="$APP_PREFIX"
-          ls -l
-          timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
-          echo "Printing The Branch Name ${{ vars.BRANCH_NAME }}"
-          artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
-          artifactname="$artifactversion.tar.gz"
-          cd myapp
+        run:
           npm install
-          tar -zcvf "$artifactname" *- name: Configure AWS Credentials
+          tar -zcvf "$artifactname" *
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
