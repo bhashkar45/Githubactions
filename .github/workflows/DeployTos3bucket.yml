@@ -4,10 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - ${{ vars.BRANCH_NAME}}
-env: 
+      - ${{ vars.BRANCH_NAME }}
+
+env:
   S3BUCKET: devops-artifact-bkt
-  
+
 jobs:
   deploy:
     permissions:
@@ -17,51 +18,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
           role-session-name: github-actions
-          aws-region: ${{ secrets.AWS_REGION_NAME }} 
-      - name: Upload Artifact to s3
-        run: |
-          echo "Branch name is ${{ github.head_ref }}"
-          echo Build started on `date`
-          appPrefix="$APP_PREFIX"         
-          timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
-          #buildID=$(echo $CODEBUILD_BUILD_ID | awk -F':' '{print $2}')
-          #srcVer=$CODEBUILD_SOURCE_VERSION
-         # echo $CODEBUILD_SOURCE_VERSION
-          echo "printing the branch name ${{ vars.BRANCH_NAME }}"
-          artifactversion=$(echo $appPrefix${{vars.BRANCH_NAME}}.$timestamp)
-          #buildversion=$(echo $GITHUB_BRANCH_NAME.$buildID.$srcVer.$timestamp)
-          artifactname=$(echo $artifactversion.tar.gz)
-          #aws s3 cp s3://$DEVOPS_SCRIPTS_BUCKET/$SCRIPT_S3_PATH/appspec.yml .
-          #aws s3 cp s3://$DEVOPS_SCRIPTS_BUCKET/$SCRIPT_S3_PATH/ansible_deploy.sh .
-          #echo $ANSIBLE_INVENTORY > env.txt
-          #yarn install
-          #yarn build
-          npm install
-          #node --version
-          #cd dist
-          #touch version.html
-          #echo "$buildversion"> version.html
-          #cat version.html
-          #mv version.html cync-app/
-          #cd cync-app/
-          tar -zcvf $artifactname *
-          #aws s3 cp $artifactname s3://$ARTIFACT_BUCKET/$ARTIFACT_S3_FOLDER/
-          aws s3 cp $artifactname s3://${{ env.S3BUCKET }}/website
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-      - name: deploying new code to application server
+      - name: Upload Artifact to S3
+        run: |
+          echo "Branch name is ${{ github.ref_name }}"
+          echo "Build started on $(date)"
+          appPrefix="$APP_PREFIX"
+          timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
+          echo "Printing the branch name ${{ vars.BRANCH_NAME }}"
+          artifactversion="${appPrefix}${{ vars.BRANCH_NAME }}.$timestamp"
+          artifactname="$artifactversion.tar.gz"
+          npm install
+          tar -zcvf "$artifactname" *
+          aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}/website/"
+
+      - name: Deploying new code to application server
         run: |
           cd /home/ubuntu/cync-devops-ansible
           ansible-playbook playbooks/directory.yml -i dynamic-inventory/dev/aws_ec2.yml
-      #- name: Deploy to S3
-      #  uses: tpaschalis/s3-sync-action@master
-      #  with:
-      #    args: --acl public-read --follow-symlinks --delete
-      #  env:
-      #    AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      #    SOURCE_DIR: 'website'
