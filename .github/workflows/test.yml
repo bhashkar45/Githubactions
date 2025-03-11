@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - ${{ vars.BRANCH_NAME }}
+      - dev #${{ vars.BRANCH_NAME }}
 
 env:
   S3BUCKET: devops-artifact-bkt
