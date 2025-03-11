@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Branch name is ${{ github.ref_name }}"
           echo "Build started on $(date)"
-          appPrefix="$APP_PREFIX"
+          #appPrefix="$APP_PREFIX"
           ls -l
           timestamp=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')
           echo "Printing the branch name ${{ vars.BRANCH_NAME }}"
