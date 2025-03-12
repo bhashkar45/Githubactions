@@ -20,6 +20,9 @@ jobs:
 
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')" >> $GITHUB_ENV
+      
+      - name: Print Commit SHA
+        run: echo "Current Commit SHA: ${{ github.sha }}
 
       - name: Build or prepare artifact
         run: |
