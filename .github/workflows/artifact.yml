@@ -36,9 +36,12 @@ jobs:
           echo "Artifact Name: $ARTIFACT_NAME"
           touch version.html
           echo "$BUILDVERSION"> version.html
-          cat version.html
+          # Debugging: Check if file exists
+          ls -l version.html || echo "version.html NOT FOUND!"
           tar -zcvf "$ARTIFACT_NAME" *
-
+      - name: Print Version File Content
+        run: cat version.html
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
