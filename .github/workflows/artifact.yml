@@ -1,0 +1,44 @@
+name: Upload Artifact to S3
+
+on:
+  push:
+    branches:
+      - main  # Change this as needed
+env:
+  S3BUCKET: devops-artifact-bkt
+
+jobs:
+  upload:
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set timestamp
+        run: echo "TIMESTAMP=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')" >> $GITHUB_ENV
+
+      - name: Build or prepare artifact
+        run: |
+          mkdir -p artifacts
+          echo "Sample artifact file" > artifacts/sample-file.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact-${{ env.TIMESTAMP }}
+          path: artifacts/
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Upload to S3 with timestamp
+        run: |
+          aws s3 cp artifacts/sample-file.txt s3://${{ env.S3BUCKET }}/sample-file-${{ env.TIMESTAMP }}.txt
