@@ -40,7 +40,11 @@ jobs:
           ls -l version.html || echo "version.html NOT FOUND!"
           tar -zcvf "$ARTIFACT_NAME" *
       - name: Print Version File Content
-        run: cat version.html
+        run: |
+          cat version.html
+          mv version.html $APP_HOME/public/
+          ARTIFACT_NAME="${ARTIFACT_VERSION}.tar.gz"
+          tar -zcvf "$ARTIFACT_NAME" *
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
