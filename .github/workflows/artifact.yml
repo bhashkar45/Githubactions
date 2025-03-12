@@ -29,12 +29,14 @@ jobs:
         run: |
           mkdir -p artifacts
           echo "Sample artifact file" > artifacts/sample-file.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-artifact-${{ env.TIMESTAMP }}
-          path: artifacts/
+          artifactversion=$(echo $GITHUB_SHA.$timestamp)
+          artifactname=$(echo $artifactversion.tar.gz)
+          tar -zcvf $artifactname *
+      #- name: Upload artifact
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: my-artifact-${{ env.TIMESTAMP }}
+       #   path: artifacts/
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
@@ -45,4 +47,5 @@ jobs:
 
       - name: Upload to S3 with timestamp
         run: |
-          aws s3 cp artifacts/sample-file.txt s3://${{ env.S3BUCKET }}/sample-file-${{ env.TIMESTAMP }}.txt
+          #aws s3 cp artifacts/sample-file.txt s3://${{ env.S3BUCKET }}/sample-file-${{ env.TIMESTAMP }}.txt
+          aws s3 cp $artifactname s3://${{ env.S3BUCKET }}/
