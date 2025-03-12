@@ -27,9 +27,9 @@ jobs:
 
       - name: Build or prepare artifact
         run: |
-          mkdir -p artifacts
-          echo "Sample artifact file" > artifacts/sample-file.txt
-          artifactversion=$(echo $GITHUB_SHA.$timestamp)
+          #mkdir -p artifacts
+          #echo "Sample artifact file" > artifacts/sample-file.txt
+          artifactversion=$(echo $GITHUB_SHA.${{env.TIMESTAMP}})
           artifactname=$(echo $artifactversion.tar.gz)
           tar -zcvf $artifactname *
       #- name: Upload artifact
