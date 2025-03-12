@@ -25,12 +25,14 @@ jobs:
       - name: Print Commit SHA
         run: echo "Current Commit SHA=$GITHUB_SHA"
 
-      - name: Build or prepare artifact
+      - name: Set Artifact Version with Branch Name
         run: |
-          artifactversion="$GITHUB_SHA.${{ env.TIMESTAMP }}"
-          artifactname="$artifactversion.tar.gz"
-          echo "ARTIFACT_NAME=$artifactname" >> $GITHUB_ENV  # Store for later steps
-          tar -zcvf "$artifactname" *
+          BRANCH_NAME=${{ github.ref_name }}
+          ARTIFACT_VERSION="${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
+          ARTIFACT_NAME="${ARTIFACT_VERSION}.tar.gz"
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV  # Store for later steps
+          echo "Artifact Name: $ARTIFACT_NAME"
+          tar -zcvf "$ARTIFACT_NAME" *
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
