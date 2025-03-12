@@ -42,7 +42,7 @@ jobs:
       - name: Print Version File Content
         run: |
           cat version.html
-          mv version.html $APP_HOME/public/
+          #mv version.html $APP_HOME/public/
           ARTIFACT_NAME="${ARTIFACT_VERSION}.tar.gz"
           tar -zcvf "$ARTIFACT_NAME" *
         
