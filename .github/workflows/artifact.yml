@@ -30,9 +30,13 @@ jobs:
         run: |
           BRANCH_NAME=${{ github.ref_name }}
           ARTIFACT_VERSION="${{env.APP_PREFIX}}${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
+          BUILDVERSION="${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
           ARTIFACT_NAME="${ARTIFACT_VERSION}.tar.gz"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV  # Store for later steps
           echo "Artifact Name: $ARTIFACT_NAME"
+          touch version.html
+          echo "$BUILDVERSION"> version.html
+          cat version.html
           tar -zcvf "$ARTIFACT_NAME" *
 
       - name: Configure AWS Credentials
