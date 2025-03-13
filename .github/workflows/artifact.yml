@@ -28,7 +28,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.name }}  # Fixed indentation
+          ref: ${{ inputs.name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
       - name: Print Inputs
         run: |
         echo "Branch: ${{ inputs.name }}"
@@ -57,13 +63,6 @@ jobs:
           cat version.html
           #mv version.html $APP_HOME/public/
           tar -zcvf "$ARTIFACT_NAME" *
-        
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
-        with:
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
-          role-session-name: github-actions
-          aws-region: ${{ secrets.AWS_REGION_NAME }}
 
       - name: Upload to S3 with timestamp
         run: |
