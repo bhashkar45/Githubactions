@@ -14,9 +14,9 @@ on:
         default: 'dev2'
         type: string
 
-env:
-  S3BUCKET: devops-artifact-bkt
-  APP_PREFIX: cync_ror_
+#env:
+#  S3BUCKET: devops-artifact-bkt
+#  APP_PREFIX: cync_ror_
 
 jobs:
   upload:
@@ -65,4 +65,4 @@ jobs:
 
       - name: Upload to S3 with timestamp
         run: |
-          aws s3 cp "$ARTIFACT_NAME" s3://${{ env.S3BUCKET }}/"$ARTIFACT_NAME"
+          aws s3 cp "$ARTIFACT_NAME" s3://${{secrets.ARTIFACT_S3_BUCKET }}/${{secrets.ARTIFACT_S3_FOLDER}}/"$ARTIFACT_NAME"
