@@ -6,7 +6,7 @@ on:
       name:
         description: 'Enter the branch name'
         required: true
-        default: 'rebased-base-upgrade-8'
+        default: 'main'
         type: string
       environment:  # Fixed indentation
         description: 'The environment to deploy to'
