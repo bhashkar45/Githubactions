@@ -1,0 +1,47 @@
+name: base ror Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Enter the branch name'
+        required: true
+        default: 'main'
+        type: string
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        default: 'dev2'
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+          
+      - name: Fetch AWS Parameter Store Values
+        run: |
+          #echo "CONFIG_S3_BUCKET=$(aws ssm get-parameter --name "/dev2/config_s3_bucket" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "REPORT_S3_BUCKET=$(aws ssm get-parameter --name "/dev2/report_s3_bucket" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          echo "ARTIFACT_S3_BUCKET=$(aws ssm get-parameter --name "artifact_s3_bucket" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "DATABASE_YAMLFILE=$(aws ssm get-parameter --name "/dev2/database_yamlfile" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "RAILS_ENVIRONMENT=$(aws ssm get-parameter --name "/dev2/rails_environment" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "APP_HOME=$(aws ssm get-parameter --name "/dev2/app_home" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+
+      - name: Deploy Base ROR Application
+        run: |
+          echo "Deploying Base ROR..."
+          #echo "CONFIG_S3_BUCKET=${CONFIG_S3_BUCKET}"
+          #echo "REPORT_S3_BUCKET=${REPORT_S3_BUCKET}"
+          echo "ARTIFACT_S3_BUCKET=${ARTIFACT_S3_BUCKET}"
+          #echo "DATABASE_YAMLFILE=${DATABASE_YAMLFILE}"
+          #echo "RAILS_ENVIRONMENT=${RAILS_ENVIRONMENT}"
+          #echo "APP_HOME=${APP_HOME}"
