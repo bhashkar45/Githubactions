@@ -8,7 +8,7 @@ on:
         required: true
         default: 'main'
         type: string
-      environment:  # Fixed indentation
+      environment:
         description: 'The environment to deploy to'
         required: true
         default: 'dev2'
@@ -36,9 +36,7 @@ jobs:
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION_NAME }}
       - name: Print Inputs
-        run: |
-        echo "Branch: ${{ inputs.name }}"
-        echo "Environment: ${{ inputs.environment }}"
+        run: "echo Deploying to ${{github.event.inputs.environment}} environment"
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -u '+%Y-%m-%d_%H-%M-%S_%Z')" >> $GITHUB_ENV
       
