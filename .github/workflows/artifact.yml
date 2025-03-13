@@ -36,6 +36,26 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION_NAME }}
+      - name: Fetch AWS Parameter Store Values
+        run: |
+          #echo "CONFIG_S3_BUCKET=$(aws ssm get-parameter --name "/dev2/config_s3_bucket" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "REPORT_S3_BUCKET=$(aws ssm get-parameter --name "/dev2/report_s3_bucket" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          echo "ARTIFACT_S3_BUCKET=$(aws ssm get-parameter --name "ARTIFACT_S3_BUCKET" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          echo "ARTIFACT_S3_FOLDER=$(aws ssm get-parameter --name "ARTIFACT_S3_FOLDER" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "DATABASE_YAMLFILE=$(aws ssm get-parameter --name "/dev2/database_yamlfile" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "RAILS_ENVIRONMENT=$(aws ssm get-parameter --name "/dev2/rails_environment" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          #echo "APP_HOME=$(aws ssm get-parameter --name "/dev2/app_home" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+          echo "APP_PREFIX=$(aws ssm get-parameter --name "APP_PREFIX" --query "Parameter.Value" --output text)" >> $GITHUB_ENV
+      - name: printing the parameter store Values
+        run: |
+          #echo "CONFIG_S3_BUCKET=${CONFIG_S3_BUCKET}"
+          #echo "REPORT_S3_BUCKET=${REPORT_S3_BUCKET}"
+          echo "ARTIFACT_S3_BUCKET=${ARTIFACT_S3_BUCKET}"
+          echo "ARTIFACT_S3_FOLDER=${ARTIFACT_S3_FOLDER}"
+          #echo "DATABASE_YAMLFILE=${DATABASE_YAMLFILE}"
+          #echo "RAILS_ENVIRONMENT=${RAILS_ENVIRONMENT}"
+          #echo "APP_HOME=${APP_HOME}"
+          echo "APP_PREFIX=${APP_PREFIX}"
       - name: Print Inputs
         run: "echo Deploying to ${{github.event.inputs.environment}} environment"
       - name: Set timestamp
@@ -47,7 +67,7 @@ jobs:
       - name: Set Artifact Version with Branch Name
         run: |
           BRANCH_NAME=${{ github.ref_name }}
-          ARTIFACT_VERSION="${{env.APP_PREFIX}}${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
+          ARTIFACT_VERSION="${{APP_PREFIX}}${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
           BUILDVERSION="${BRANCH_NAME}-${GITHUB_SHA}.${{ env.TIMESTAMP }}"
           ARTIFACT_NAME="${ARTIFACT_VERSION}.tar.gz"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV  # Store for later steps
@@ -65,4 +85,4 @@ jobs:
 
       - name: Upload to S3 with timestamp
         run: |
-          aws s3 cp "$ARTIFACT_NAME" s3://${{secrets.ARTIFACT_S3_BUCKET }}/${{secrets.ARTIFACT_S3_FOLDER}}/"
+          aws s3 cp "$ARTIFACT_NAME" s3://${{ARTIFACT_S3_BUCKET }}/${{ARTIFACT_S3_FOLDER}}/"
