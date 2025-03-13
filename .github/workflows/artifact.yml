@@ -65,4 +65,4 @@ jobs:
 
       - name: Upload to S3 with timestamp
         run: |
-          aws s3 cp "$ARTIFACT_NAME" s3://${{secrets.ARTIFACT_S3_BUCKET }}/${{secrets.ARTIFACT_S3_FOLDER}}/"$ARTIFACT_NAME"
+          aws s3 cp "$ARTIFACT_NAME" s3://${{secrets.ARTIFACT_S3_BUCKET }}/${{secrets.ARTIFACT_S3_FOLDER}}/"
