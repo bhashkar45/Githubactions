@@ -6,7 +6,7 @@ on:
       name:
         description: 'Enter the branch name'
         required: true
-        default: 'bhaskar-staging'
+        default: 'main'
         type: string
       environment:
         description: 'The environment to deploy to'
