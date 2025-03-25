@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - dev
+
 env:
   S3BUCKET: devops-artifact-bkt
 
@@ -13,22 +14,47 @@ jobs:
     permissions:
       id-token: write  # Required for OIDC authentication
       contents: read
-    runs-on: self-hosted
+    runs-on: [self-hosted, bhaskar] 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION_NAME }}
-      - name: upload to s3
+
+      - name: Create a directory
         run: |
-          artifactversion=$(echo ${GITHUB_REF#refs/heads/}.$timestamp)
-          artifactname=$(echo $artifactversion.tar.gz)
-          aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}"
-      - name: Deploying new code to application server
+          mkdir -p my-directory
+  test:
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
+    runs-on: [self-hosted, dhruva] 
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_NAME }}
+          role-session-name: github-actions
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Create a directory
         run: |
-          cd /home/ubuntu/cync-devops-ansible
-          ansible-playbook playbooks/directory.yml -i dynamic-inventory/dev/aws_ec2.yml
+          mkdir -p Dhruva
+
+      # - name: upload to s3
+      #   run: |
+      #     artifactversion=$(echo ${GITHUB_REF#refs/heads/}.$timestamp)
+      #     artifactname=$(echo $artifactversion.tar.gz)
+      #     aws s3 cp "$artifactname" "s3://${{ env.S3BUCKET }}"
+      # - name: Deploying new code to application server
+      #   run: |
+      #     cd /home/ubuntu/cync-devops-ansible
+      #     ansible-playbook playbooks/directory.yml -i dynamic-inventory/dev/aws_ec2.yml
