@@ -28,7 +28,7 @@ jobs:
           
       - name: Create a directory
         run: |
-          mkdir -p Dhruva
+          mkdir -p /home/ubuntu/Dhruva
   deploy:
     permissions:
       id-token: write  # Required for OIDC authentication
@@ -47,7 +47,7 @@ jobs:
 
       - name: Create a directory
         run: |
-          mkdir -p my-directory
+          mkdir -p /home/ubuntu/my-directory
   
       # - name: upload to s3
       #   run: |
